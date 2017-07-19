@@ -152,6 +152,10 @@ class GomokuEnv(gym.Env):
         outfile.write(repr(self.state) + '\n')
         return outfile
     
+    # return the current board
+    def _getBoard(self):
+        return self.state.board.encode()
+    
     def _step(self, action):
         '''
         Args: 
