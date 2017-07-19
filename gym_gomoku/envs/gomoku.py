@@ -72,6 +72,9 @@ class DiscreteWrapper(spaces.Discrete):
         else:
             print ("space %d is not in valid spaces" % s)
 
+    # return all valid actions
+    def actions(self):
+        return self.valid_spaces
 
 ### Environment
 class GomokuEnv(gym.Env):
