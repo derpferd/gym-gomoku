@@ -4,7 +4,10 @@ The game is played on a typical 19x19 or 15x15 go board. Black plays first and p
 alternate in placing a stone of their color on an empty intersection.
 The winner is the first player to get an unbroken row of five stones horizontally, vertically, or diagonally.
 
-#Demo
+# Acks
+This project was started by [Xichen](https://github.com/rockingdingo). His fork can be found at [https://github.com/rockingdingo/gym-gomoku](https://github.com/rockingdingo/gym-gomoku).
+
+# Demo
 ![gym_gomoku_demo](demo/gym_gomoku_demo.gif)
 
 # Installation
@@ -15,7 +18,7 @@ pip install gym-gomoku
 
 Github
 ```bash
-git clone https://github.com/rockingdingo/gym-gomoku.git
+git clone https://github.com/derpferd/gym-gomoku.git
 cd gym-gomoku
 pip install -e .
 ```
