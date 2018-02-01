@@ -11,13 +11,13 @@ This project was started by [Xichen](https://github.com/rockingdingo). His fork 
 ![gym_gomoku_demo](demo/gym_gomoku_demo.gif)
 
 # Installation
-Pip
-```bash
-pip install gym-gomoku
-```
 
 Github
 ```bash
+git clone https://github.com/openai/gym.git
+cd gym
+pip install -e .
+cd ..
 git clone https://github.com/derpferd/gym-gomoku.git
 cd gym-gomoku
 pip install -e .
