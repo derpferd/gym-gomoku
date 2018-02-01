@@ -12,7 +12,6 @@ This project was started by [Xichen](https://github.com/rockingdingo). His fork 
 
 # Installation
 
-Github
 ```bash
 git clone https://github.com/openai/gym.git
 cd gym
