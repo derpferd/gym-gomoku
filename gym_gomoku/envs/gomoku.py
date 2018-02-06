@@ -93,7 +93,7 @@ class GomokuEnv(gym.Env):
         self.board_size = board_size
         self.player_color = player_color
         
-        self._seed()
+        self.seed()
         
         # opponent
         self.opponent_policy = None
@@ -113,22 +113,22 @@ class GomokuEnv(gym.Env):
         self.state = None
         
         # reset the board during initialization
-        self._reset()
+        self.reset()
     
-    def _seed(self, seed=None):
+    def seed(self, seed=None):
         self.np_random, seed1 = seeding.np_random(seed)
         # Derive a random seed.
         seed2 = seeding.hash_seed(seed1 + 1) % 2**32
         return [seed1, seed2]
     
-    def _reset(self):
+    def reset(self):
         self.state = GomokuState(Board(self.board_size), gomoku_util.BLACK) # Black Plays First
-        self._reset_opponent(self.state.board) # (re-initialize) the opponent,
+        self.reset_opponent(self.state.board) # (re-initialize) the opponent,
         self.moves = []
         
         # Let the opponent play if it's not the agent's turn, there is no resign in Gomoku
         if self.state.color != self.player_color:
-            self.state, _ = self._exec_opponent_play(self.state, None, None)
+            self.state, _ = self.exec_opponent_play(self.state, None, None)
             opponent_action_coord = self.state.board.last_coord
             self.moves.append(opponent_action_coord)
         
@@ -141,22 +141,22 @@ class GomokuEnv(gym.Env):
         self.done = self.state.board.is_terminal()
         return self.state.board.encode()
     
-    def _close(self):
+    def close(self):
         self.opponent_policy = None
         self.state = None
     
-    def _render(self, mode="human", close=False):
-        if close:
+    def render(self, mode="human"):
+        if mode not in self.metadata["render.modes"]:
             return
         outfile = StringIO() if mode == 'ansi' else sys.stdout
         outfile.write(repr(self.state) + '\n')
         return outfile
     
     # return the current board
-    def _getBoard(self):
+    def getBoard(self):
         return self.state.board.encode()
     
-    def _step(self, action):
+    def step(self, action):
         '''
         Args: 
             action: int
@@ -182,7 +182,7 @@ class GomokuEnv(gym.Env):
         
         # Opponent play
         if not self.state.board.is_terminal():
-            self.state, opponent_action = self._exec_opponent_play(self.state, prev_state, action)
+            self.state, opponent_action = self.exec_opponent_play(self.state, prev_state, action)
             self.moves.append(self.state.board.last_coord)
             self.action_space.remove(opponent_action)   # remove opponent action from action_space
             # After opponent play, we should be back to the original color
@@ -207,7 +207,7 @@ class GomokuEnv(gym.Env):
             reward = 1. if player_wins else -1.
         return self.state.board.encode(), reward, True, {'state': self.state}
     
-    def _exec_opponent_play(self, curr_state, prev_state, prev_action):
+    def exec_opponent_play(self, curr_state, prev_state, prev_action):
         '''There is no resign in gomoku'''
         assert curr_state.color != self.player_color
         opponent_action = self.opponent_policy(curr_state, prev_state, prev_action)
@@ -221,7 +221,7 @@ class GomokuEnv(gym.Env):
     def _moves(self):
         return self.moves
     
-    def _reset_opponent(self, board):
+    def reset_opponent(self, board):
         if self.opponent == 'random':
             self.opponent_policy = make_random_policy(self.np_random)
         elif self.opponent == 'beginner':
