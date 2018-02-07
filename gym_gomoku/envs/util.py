@@ -11,23 +11,41 @@ from gym.utils import seeding
 from six import StringIO
 import sys
 import six
+from enum import Enum, unique
 
-class GomokuUtil(object):
-    
-    def __init__(self):
-        # default setting
-        self.BLACK = 'black'
-        self.WHITE = 'white'
-        self.color = [self.BLACK, self.WHITE]
-        self.color_dict = {'empty': 0, 'black': 1, 'white': 2}
-        self.color_dict_rev = {v: k for k, v in self.color_dict.items()}
-        self.color_shape = {0: '.', 1: 'X', 2: 'O'}
-    
+
+@unique
+class Color(Enum):
+    empty = 0
+    black = 1
+    white = 2
+
+    @property
+    def shape(self):
+        return {0: '.', 1: 'X', 2: 'O'}[self.value]
+
+    @property
+    def other(self):
+        assert self != Color.empty, 'Invalid player color'
+        return {Color.black: Color.white, Color.white: Color.black}[self]
+
+    def __str__(self):
+        return self.shape
+
+    @classmethod
+    def players(cls):
+        return {cls.black, cls.white}
+
+
+class GomokuUtil:
     def other_color(self, color):
-        '''Return the opositive color of the current player's color
+        '''Return the opposite color of the current player's color
         '''
-        assert color in self.color, 'Invalid player color'
-        opposite_color = self.color[0] if color == self.color[1] else self.color[1]
+        assert color in Color.players(), 'Invalid player color'
+
+        opposite_color = Color.black
+        if color == Color.black:
+            opposite_color = Color.white
         return opposite_color
     
     def iterator(self, board_state):
@@ -89,11 +107,11 @@ class GomokuUtil(object):
             Return: exist, color
         '''
         size = len(board_state)
-        black_pattern = [self.color_dict[self.BLACK] for _ in range(5)] # [1,1,1,1,1]
-        white_pattern = [self.color_dict[self.WHITE] for _ in range(5)] # [2,2,2,2,2]
+        black_pattern = [Color.black.value for _ in range(5)] # [1,1,1,1,1]
+        white_pattern = [Color.white.value for _ in range(5)] # [2,2,2,2,2]
         
         exist_final = False
-        color_final = "empty"
+        color_final = Color.empty.value
         black_win, _ = self.check_pattern(board_state, black_pattern)
         white_win, _ = self.check_pattern(board_state, white_pattern)
         
@@ -101,13 +119,13 @@ class GomokuUtil(object):
             raise error.Error('Both Black and White has 5-in-row, rules conflicts')
         # Check if there is any one party wins
         if not (black_win or white_win):
-            return exist_final, "empty"
+            return exist_final, Color.empty
         else:
             exist_final = True
         if (black_win):
-            return exist_final, self.BLACK
+            return exist_final, Color.black
         if (white_win):
-            return exist_final, self.WHITE
+            return exist_final, Color.white
     
     def check_board_full(self, board_state):
         is_full = True
