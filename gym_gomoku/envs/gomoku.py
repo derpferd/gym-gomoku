@@ -130,9 +130,9 @@ class Board(object):
         letters = list('ABCDEFGHIJKLMNOPQRSTUVWXYZ')[:size]
 
         label_move = "Move: " + str(self.move) + "\n"
-        label_letters = "     " + " ".join(letters) + "\n"
-        label_letters = "     " + " ".join(letters) + "\n"
-        label_boundry = "   " + "+-" + "".join(["-"] * (2 * size)) + "+" + "\n"
+        label_letters = "      " + "   ".join(letters) + "\n"
+        label_letters = "      " + "   ".join(letters) + "\n"
+        label_boundry = "   " + "+-" + "".join(["-"] * (4 * size)) + "+" + "\n"
 
         # construct the board output
         out += (label_move + label_letters + label_boundry)
@@ -142,7 +142,10 @@ class Board(object):
             line += (str("%2d" % (i+1)) + " |" + " ")
             for j in range(size):
                 # check if it's the last move
-                line += Color(self.board_state[i][j]).shape
+                if Color(self.board_state[i][j]).shape == ".":
+                    line += '{:>3}'.format(str(i * 19 + j))
+                else:
+                    line += '{:>3}'.format(Color(self.board_state[i][j]).shape)
                 if (i, j) == self.last_coord:
                     line += ")"
                 else:

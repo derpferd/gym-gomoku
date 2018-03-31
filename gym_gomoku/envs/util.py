@@ -22,7 +22,7 @@ class Color(Enum):
 
     @property
     def shape(self):
-        return {0: '.', 1: 'X', 2: 'O'}[self.value]
+        return {0: '.', 1: '\x1b[30;41m' + ' X ' + '\x1b[0m', 2: '\x1b[30;42m' + ' O ' + '\x1b[0m'}[self.value]
 
     @property
     def other(self):
