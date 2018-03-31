@@ -28,9 +28,9 @@ class Board(object):
     def __init__(self, board_size: int):
         self.size = board_size
         self.board_state = [[Color.empty.value] * board_size for i in range(board_size)]  # initialize board states to empty
-        self.move = 0                 # how many move has been made
+        self.move = 0                  # how many move has been made
         self.last_coord = (-1, -1)     # last action coord
-        self.last_action = None       # last action made
+        self.last_action = None        # last action made
         self.position_sets = {Color.empty: set(range(board_size**2)),
                               Color.black: set(),
                               Color.white: set()}
@@ -85,7 +85,7 @@ class Board(object):
         # copy the position_sets
         self.position_sets = dict([(k, set(v)) for k, v in position_sets.items()])
 
-    def play(self, action, color):
+    def play(self, action: int, color: Color):
         '''
             Args: input action, current player color
             Return: new copy of board object
@@ -162,6 +162,14 @@ class Board(object):
         img = np.array(self.board_state) # shape [board_size, board_size]
         return img
 
+    @property
+    def ternary(self):
+        return {"".join(str(x) for r in self.board_state for x in r),
+                "".join(str(x) for r in reversed(self.board_state) for x in r),
+                "".join(str(x) for r in self.board_state for x in reversed(r)),
+                "".join(str(self.board_state[j][i]) for i in reversed(range(self.size)) for j in reversed(range(self.size))),
+                "".join(str(self.board_state[j][i]) for i in range(self.size) for j in range(self.size))}
+
 
 class GomokuState(object):
     '''
@@ -214,6 +222,9 @@ class GomokuState(object):
         '''stream of board shape output'''
         # To Do: Output shape * * * o o
         return 'To play: {}\n{}'.format(self.color.name, self.board.__repr__())
+
+    def __hash__(self):
+        return min(map(lambda x: int(str(self.color.value - 1) + x, 3), self.board.ternary))
 
 
 # Sampling without replacement Wrapper 
